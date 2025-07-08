@@ -35,7 +35,7 @@ contract CreateSubscription is Script {
 }
 
 contract FundSubscription is Script, CodeConstants {
-    uint public constant FUND_AMOUNT = 3 ether; // 3 LINK
+    uint public constant FUND_AMOUNT = 1000 ether; // 3 LINK
 
     function fundSubscriptionUsingConfig() public {
         HelperConfig helperConfig = new HelperConfig();
