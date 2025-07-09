@@ -7,8 +7,9 @@ import {HelperConfig} from "script/HelperConfig.s.sol";
 import {Raffle} from "src/Raffle.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
+import {CodeConstants} from "script/HelperConfig.s.sol";
 
-contract RaffleTest is Test {
+contract RaffleTest is Test, CodeConstants {
     Raffle public raffle;
     HelperConfig public helperConfig;
 
@@ -187,9 +188,15 @@ contract RaffleTest is Test {
     /* -------------------------------------------------------------------------- */
     /*                             FULFILLRANDOMWORDS                             */
     /* -------------------------------------------------------------------------- */
+
+    modifier skipFork() {
+        if (block.chainid != LOCAL_CHAIN_ID) return;
+        _;
+    }
+
     function testFulfillRadomWordsCanOnlyBeCalledAfterPerformUpkeep(
         uint256 randomRequestId
-    ) public raffleEntered {
+    ) public raffleEntered skipFork {
         // arrange / act / assert
         vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(
@@ -201,6 +208,7 @@ contract RaffleTest is Test {
     function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney()
         public
         raffleEntered
+        skipFork
     {
         // arrange
         uint256 additionalEntrants = 3;
@@ -249,3 +257,5 @@ contract RaffleTest is Test {
 
 // forge coverage --report debug > coverage.txt
 // forge test --match-test testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney -vvvv
+// export no_proxy=https://eth-sepolia.g.alchemy.com
+// forge test --fork-url $SEPOLIA_RPC_URL -vvvv
