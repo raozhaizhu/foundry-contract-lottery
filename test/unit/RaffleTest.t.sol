@@ -21,7 +21,7 @@ contract RaffleTest is Test, CodeConstants {
     uint32 callbackGasLimit;
 
     address public PLAYER = makeAddr("player");
-    uint256 public constant STARTING_PLAYER_BALANCE = 1 ether;
+    uint256 public constant STARTING_PLAYER_BALANCE = 0.02 ether;
     // Events
     event RaffleEnter(address indexed player);
     event WinnerPicked(address indexed winner);
@@ -221,7 +221,7 @@ contract RaffleTest is Test, CodeConstants {
             i++
         ) {
             address newPlayer = address(uint160(i));
-            hoax(newPlayer, 1 ether);
+            hoax(newPlayer, 0.02 ether);
             raffle.enterRaffle{value: entranceFee}();
         }
 
